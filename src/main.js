@@ -1,7 +1,12 @@
-import { CATEGORIES, products } from './products.js';
+import { supabase } from './supabase.js';
+
+const CATEGORIES = ['전체', '과자', '음료', '빵', '아이스크림'];
 
 // 재고 상태 코드 → 화면에 보일 글자
 const STATUS_LABEL = { in: '있음', low: '조금 남음', out: '품절' };
+
+// 데이터베이스에서 받아 온 상품 목록 (처음엔 비어 있어요)
+let products = [];
 
 // 지금 고른 카테고리와 검색어를 기억해 두는 곳
 let currentCategory = '전체';
@@ -16,6 +21,35 @@ const updated = document.getElementById('updated');
 // 숫자 1500 → "1,500원"
 function formatPrice(won) {
   return won.toLocaleString('ko-KR') + '원';
+}
+
+// 시각 → "몇 분 전"
+function minutesAgo(time) {
+  return Math.max(0, Math.round((Date.now() - new Date(time).getTime()) / 60000));
+}
+
+// 데이터베이스에서 상품 + 재고 상태를 함께 가져오기
+async function loadProducts() {
+  const { data, error } = await supabase
+    .from('product')
+    .select('id, name, category, price, emoji, stock_status(status, updated_at)')
+    .order('display_order');
+
+  if (error) {
+    updated.textContent = '재고를 불러오지 못했어요. 잠시 후 다시 열어 주세요.';
+    console.error(error);
+    return;
+  }
+
+  // 화면에서 쓰기 편한 모양으로 바꾸기
+  products = data.map((p) => ({
+    ...p,
+    status: p.stock_status?.status ?? 'in',
+    updatedAt: p.stock_status?.updated_at ?? null,
+  }));
+
+  renderUpdated();
+  renderProducts();
 }
 
 // 카테고리 탭 버튼 만들기
@@ -47,7 +81,7 @@ function renderProducts() {
     const li = document.createElement('li');
     li.className = `card status-${p.status}`;
     li.innerHTML = `
-      <div class="thumb" aria-hidden="true">${p.emoji}</div>
+      <div class="thumb" aria-hidden="true">${p.emoji ?? '🛒'}</div>
       <div class="name">${p.name}</div>
       <div class="price">${formatPrice(p.price)}</div>
       <div class="badge">${STATUS_LABEL[p.status]}</div>
@@ -59,7 +93,12 @@ function renderProducts() {
 
 // 맨 위 "N분 전 업데이트" (가장 최근에 바뀐 상품 기준)
 function renderUpdated() {
-  const latest = Math.min(...products.map((p) => p.updatedMinAgo));
+  const times = products.map((p) => p.updatedAt).filter(Boolean);
+  if (times.length === 0) {
+    updated.textContent = '';
+    return;
+  }
+  const latest = Math.min(...times.map(minutesAgo));
   updated.textContent = `마지막 업데이트 ${latest}분 전`;
 }
 
@@ -69,6 +108,6 @@ search.addEventListener('input', () => {
   renderProducts();
 });
 
-renderUpdated();
+updated.textContent = '재고 불러오는 중…';
 renderTabs();
-renderProducts();
+loadProducts();
