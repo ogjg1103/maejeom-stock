@@ -1,0 +1,138 @@
+/* 색깔 이름표: 여기 값만 바꾸면 앱 전체 색이 바뀌어요 */
+:root {
+  --bg: #f5f5f4;
+  --card: #ffffff;
+  --text: #1c1917;
+  --muted: #78716c;
+  --line: #e7e5e4;
+  --brand: #16a34a;
+  --in: #16a34a;   /* 있음 = 초록 */
+  --low: #ca8a04;  /* 조금 남음 = 노랑 */
+  --out: #dc2626;  /* 품절 = 빨강 */
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+
+/* PC에서는 휴대폰 폭으로 가운데에 보여 주기 */
+.top, main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* 위쪽 영역: 스크롤해도 따라오게 고정 */
+.top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--bg);
+  padding-top: 16px;
+  padding-bottom: 8px;
+}
+
+h1 { margin: 0; font-size: 22px; }
+
+.updated {
+  margin: 4px 0 12px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.search {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px; /* 16px보다 작으면 아이폰이 화면을 확대해 버려요 */
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+/* 카테고리 탭: 넘치면 옆으로 밀어서 보기 */
+.tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px 0 4px;
+  scrollbar-width: none; /* 밀어서 넘길 수 있지만 스크롤 막대는 숨기기 */
+}
+
+.tab {
+  flex: none;
+  padding: 8px 16px;
+  min-height: 40px;
+  font-size: 15px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.tab.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* 상품 카드: 한 줄에 2개 */
+.grid {
+  list-style: none;
+  margin: 8px 0 24px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.thumb {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  font-size: 48px;
+  background: var(--bg);
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.name { font-weight: 600; font-size: 15px; }
+.price { color: var(--muted); font-size: 14px; margin: 2px 0 8px; }
+
+/* 상태 표시: 색 + 글자 함께 (색을 구분하기 어려운 친구도 읽을 수 있게) */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.status-in  .badge { background: var(--in); }
+.status-low .badge { background: var(--low); }
+.status-out .badge { background: var(--out); }
+
+/* 품절 상품은 살짝 흐리게 */
+.status-out .thumb,
+.status-out .name,
+.status-out .price { opacity: 0.45; }
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 32px 0;
+}
