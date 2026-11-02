@@ -1,5 +1,7 @@
 import { supabase } from './supabase.js';
-import { CATEGORIES, compareProducts, flattenProduct, formatPrice, stockText } from './catalog.js';
+import {
+  CATEGORIES, compareProducts, flattenProduct, formatPrice, stockClass, stockText,
+} from './catalog.js';
 
 const TABS = ['전체', ...CATEGORIES];
 
@@ -67,7 +69,7 @@ function renderProducts() {
   grid.innerHTML = '';
   for (const p of visible) {
     const li = document.createElement('li');
-    li.className = `card status-${p.status}`;
+    li.className = `card ${stockClass(p)}`;
     li.innerHTML = `
       <div class="thumb" aria-hidden="true"></div>
       <div class="name"></div>

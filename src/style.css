@@ -6,9 +6,9 @@
   --muted: #78716c;
   --line: #e7e5e4;
   --brand: #16a34a;
-  --in: #16a34a;   /* 있음 = 초록 */
-  --low: #ca8a04;  /* 조금 남음 = 노랑 */
-  --out: #dc2626;  /* 품절 = 빨강 */
+  --in: #16a34a;      /* 1개 이상 = 초록 */
+  --out: #dc2626;     /* 0개 = 빨강 */
+  --unknown: #a8a29e; /* 개수 미입력 = 회색 */
 }
 
 * { box-sizing: border-box; }
@@ -112,7 +112,7 @@ h1 { margin: 0; font-size: 22px; }
 .name { font-weight: 600; font-size: 15px; }
 .price { color: var(--muted); font-size: 14px; margin: 2px 0 8px; }
 
-/* 상태 표시: 색 + 글자 함께 (색을 구분하기 어려운 친구도 읽을 수 있게) */
+/* 남은 개수 표시: 색 + 숫자 함께 (색을 구분하기 어려운 친구도 읽을 수 있게) */
 .badge {
   display: inline-block;
   padding: 4px 10px;
@@ -122,14 +122,14 @@ h1 { margin: 0; font-size: 22px; }
   color: #fff;
 }
 
-.status-in  .badge { background: var(--in); }
-.status-low .badge { background: var(--low); }
-.status-out .badge { background: var(--out); }
+.stock-in      .badge { background: var(--in); }
+.stock-out     .badge { background: var(--out); }
+.stock-unknown .badge { background: var(--unknown); }
 
-/* 품절 상품은 살짝 흐리게 */
-.status-out .thumb,
-.status-out .name,
-.status-out .price { opacity: 0.45; }
+/* 0개 상품은 살짝 흐리게 */
+.stock-out .thumb,
+.stock-out .name,
+.stock-out .price { opacity: 0.45; }
 
 .empty {
   text-align: center;

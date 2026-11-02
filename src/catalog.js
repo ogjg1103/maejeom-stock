@@ -5,14 +5,16 @@ export const CATEGORIES = ['과자', '음료', '젤리', '아이스크림'];
 // 사진이 생기기 전까지 카테고리별 그림 글자
 export const CATEGORY_EMOJI = { 과자: '🍿', 음료: '🥤', 젤리: '🍬', 아이스크림: '🍦' };
 
-// 재고 상태 코드 → 화면에 보일 글자
-export const STATUS_LABEL = { in: '있음', low: '조금 남음', out: '품절' };
-
-// 카드에 보일 재고 글자: 개수를 알면 "5개 남음", 모르면 "있음" 같은 상태
+// 카드에 보일 재고 글자: 숫자만 ("5개"), 아직 개수를 안 넣었으면 "–"
 export function stockText(p) {
-  if (p.quantity == null) return STATUS_LABEL[p.status];
-  if (p.quantity === 0) return '품절';
-  return `${p.quantity}개 남음`;
+  if (p.quantity == null) return '–';
+  return `${p.quantity}개`;
+}
+
+// 재고 색: 0개 = 빨강, 1개 이상 = 초록, 개수 모름 = 회색
+export function stockClass(p) {
+  if (p.quantity == null) return 'stock-unknown';
+  return p.quantity === 0 ? 'stock-out' : 'stock-in';
 }
 
 // 정렬: 카테고리 → 비싼 가격 먼저 → 가나다순
