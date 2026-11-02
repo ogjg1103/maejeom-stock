@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#16a34a" />
+    <title>매점 관리자</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/src/admin.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="admin-head">
+        <h1>매점 관리자</h1>
+        <button id="logout" class="link-btn" hidden>로그아웃</button>
+      </div>
+      <p class="updated"><a href="/">학생 화면 보기 →</a></p>
+    </header>
+
+    <main>
+      <!-- 1) 로그인 -->
+      <section id="login-view" class="panel" hidden>
+        <h2>로그인</h2>
+        <form id="login-form" class="form">
+          <label>이메일 <input name="email" type="email" required autocomplete="username" /></label>
+          <label>비밀번호 <input name="password" type="password" required autocomplete="current-password" /></label>
+          <button class="primary" type="submit">로그인</button>
+        </form>
+        <p class="msg" id="login-msg"></p>
+      </section>
+
+      <!-- 2) 로그인은 했지만 관리자가 아닐 때 -->
+      <section id="denied-view" class="panel" hidden>
+        <h2>관리자 승인이 필요해요</h2>
+        <p>이 계정은 아직 관리자로 등록되지 않았어요. 매점 담당 선생님께 등록을 요청하세요.</p>
+      </section>
+
+      <!-- 3) 관리자 화면 -->
+      <div id="admin-view" hidden>
+        <section class="panel">
+          <h2>새 상품 추가</h2>
+          <form id="add-form" class="form">
+            <label>상품 이름 <input name="name" required maxlength="40" /></label>
+            <label>카테고리 <select name="category" id="category-select"></select></label>
+            <label>가격(원) <input name="price" type="number" min="0" step="100" required inputmode="numeric" /></label>
+            <label>지금 남은 개수 (모르면 비워 두기)
+              <input name="quantity" type="number" min="0" inputmode="numeric" />
+            </label>
+            <button class="primary" type="submit">추가하기</button>
+          </form>
+          <p class="msg" id="add-msg"></p>
+        </section>
+
+        <section class="panel">
+          <h2>남은 개수 수정</h2>
+          <p class="hint">0개 = 품절, 1~3개 = 조금 남음, 4개 이상 = 있음으로 자동 표시돼요.</p>
+          <ul id="stock-list" class="stock-list"></ul>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="/src/admin.js"></script>
+  </body>
+</html>

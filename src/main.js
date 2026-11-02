@@ -1,9 +1,7 @@
 import { supabase } from './supabase.js';
+import { CATEGORIES, compareProducts, flattenProduct, formatPrice, stockText } from './catalog.js';
 
-const CATEGORIES = ['전체', '과자', '음료', '젤리', '아이스크림'];
-
-// 재고 상태 코드 → 화면에 보일 글자
-const STATUS_LABEL = { in: '있음', low: '조금 남음', out: '품절' };
+const TABS = ['전체', ...CATEGORIES];
 
 // 데이터베이스에서 받아 온 상품 목록 (처음엔 비어 있어요)
 let products = [];
@@ -18,11 +16,6 @@ const search = document.getElementById('search');
 const empty = document.getElementById('empty');
 const updated = document.getElementById('updated');
 
-// 숫자 1500 → "1,500원"
-function formatPrice(won) {
-  return won.toLocaleString('ko-KR') + '원';
-}
-
 // 시각 → "몇 분 전"
 function minutesAgo(time) {
   return Math.max(0, Math.round((Date.now() - new Date(time).getTime()) / 60000));
@@ -32,8 +25,8 @@ function minutesAgo(time) {
 async function loadProducts() {
   const { data, error } = await supabase
     .from('product')
-    .select('id, name, category, price, emoji, stock_status(status, updated_at)')
-    .order('display_order');
+    .select('id, name, category, price, emoji, stock_status(status, quantity, updated_at)')
+    .eq('hidden', false);
 
   if (error) {
     updated.textContent = '재고를 불러오지 못했어요. 잠시 후 다시 열어 주세요.';
@@ -41,12 +34,7 @@ async function loadProducts() {
     return;
   }
 
-  // 화면에서 쓰기 편한 모양으로 바꾸기
-  products = data.map((p) => ({
-    ...p,
-    status: p.stock_status?.status ?? 'in',
-    updatedAt: p.stock_status?.updated_at ?? null,
-  }));
+  products = data.map(flattenProduct).sort(compareProducts);
 
   renderUpdated();
   renderProducts();
@@ -55,7 +43,7 @@ async function loadProducts() {
 // 카테고리 탭 버튼 만들기
 function renderTabs() {
   tabs.innerHTML = '';
-  for (const cat of CATEGORIES) {
+  for (const cat of TABS) {
     const btn = document.createElement('button');
     btn.textContent = cat;
     btn.className = 'tab' + (cat === currentCategory ? ' active' : '');
@@ -81,11 +69,16 @@ function renderProducts() {
     const li = document.createElement('li');
     li.className = `card status-${p.status}`;
     li.innerHTML = `
-      <div class="thumb" aria-hidden="true">${p.emoji ?? '🛒'}</div>
-      <div class="name">${p.name}</div>
-      <div class="price">${formatPrice(p.price)}</div>
-      <div class="badge">${STATUS_LABEL[p.status]}</div>
+      <div class="thumb" aria-hidden="true"></div>
+      <div class="name"></div>
+      <div class="price"></div>
+      <div class="badge"></div>
     `;
+    // 글자는 textContent로 넣어요 (상품 이름에 특수문자가 있어도 안전하게)
+    li.querySelector('.thumb').textContent = p.emoji ?? '🛒';
+    li.querySelector('.name').textContent = p.name;
+    li.querySelector('.price').textContent = formatPrice(p.price);
+    li.querySelector('.badge').textContent = stockText(p);
     grid.appendChild(li);
   }
   empty.hidden = visible.length > 0;

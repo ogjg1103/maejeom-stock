@@ -1,0 +1,113 @@
+/* 관리자 화면에만 쓰는 모양 (색깔은 style.css의 이름표를 같이 써요) */
+
+.admin-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.updated a { color: var(--brand); }
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 12px 0;
+}
+
+.panel h2 { margin: 0 0 12px; font-size: 18px; }
+
+.form { display: grid; gap: 12px; }
+
+.form label {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.form input,
+.form select {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+}
+
+.primary {
+  min-height: 48px;
+  font-size: 16px;
+  font-weight: 700;
+  border: 0;
+  border-radius: 12px;
+  background: var(--brand);
+  color: #fff;
+  cursor: pointer;
+}
+
+.primary:disabled { opacity: 0.5; }
+
+.link-btn {
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.msg { margin: 8px 0 0; font-size: 14px; min-height: 1em; }
+.msg.ok { color: var(--in); }
+.msg.err { color: var(--out); }
+
+.hint { margin: -4px 0 12px; font-size: 13px; color: var(--muted); }
+
+/* 남은 개수 목록 */
+.stock-list { list-style: none; margin: 0; padding: 0; }
+
+.cat-title {
+  margin: 16px 0 4px;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.stock-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.stock-row.is-hidden .row-name { opacity: 0.45; text-decoration: line-through; }
+
+.row-name { font-weight: 600; font-size: 15px; }
+.row-sub { font-size: 13px; color: var(--muted); }
+
+.stepper { display: flex; align-items: center; gap: 4px; }
+
+.stepper button {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.stepper input {
+  width: 52px;
+  height: 40px;
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.row-actions { grid-column: 1 / -1; }
