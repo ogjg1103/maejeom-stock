@@ -1,6 +1,6 @@
 import { supabase } from './supabase.js';
 
-const CATEGORIES = ['전체', '과자', '음료', '빵', '아이스크림'];
+const CATEGORIES = ['전체', '과자', '음료', '젤리', '아이스크림'];
 
 // 재고 상태 코드 → 화면에 보일 글자
 const STATUS_LABEL = { in: '있음', low: '조금 남음', out: '품절' };
@@ -99,7 +99,7 @@ function renderUpdated() {
     return;
   }
   const latest = Math.min(...times.map(minutesAgo));
-  updated.textContent = `마지막 업데이트 ${latest}분 전`;
+  updated.textContent = latest === 0 ? '방금 업데이트' : `마지막 업데이트 ${latest}분 전`;
 }
 
 // 검색창에 글자를 칠 때마다 목록 다시 그리기
