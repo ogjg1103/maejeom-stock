@@ -30,10 +30,21 @@ function saveJson(key, value) {
 function loadDeviceId() {
   let id = readJson('device-id', null);
   if (!id) {
-    id = crypto.randomUUID();
+    id = randomId();
     saveJson('device-id', id);
   }
   return id;
+}
+
+// 임의의 번호(UUID) 만들기
+// crypto.randomUUID는 https 주소에서만 되고 오래된 아이폰엔 없어서,
+// 어디서나 되는 getRandomValues로 직접 만들어요.
+function randomId() {
+  const b = crypto.getRandomValues(new Uint8Array(16));
+  b[6] = (b[6] & 0x0f) | 0x40; // UUID 버전 4 표시
+  b[8] = (b[8] & 0x3f) | 0x80;
+  const h = [...b].map((x) => x.toString(16).padStart(2, '0')).join('');
+  return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
 }
 
 function setMsg(text, ok) {
