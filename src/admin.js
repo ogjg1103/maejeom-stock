@@ -1,5 +1,6 @@
 import { supabase } from './supabase.js';
 import { initAuthGate } from './auth.js';
+import { REQUEST_STATUS, fillRequestCard } from './requests-shared.js';
 import {
   CATEGORIES, CATEGORY_EMOJI, compareProducts, flattenProduct, formatPrice, stockText,
 } from './catalog.js';
@@ -167,5 +168,83 @@ function renderStockList() {
   }
 }
 
-// 관리자만 들어올 수 있어요. 들어오면 상품 목록 불러오기
-initAuthGate({ roles: ['admin'], onEnter: loadProducts });
+// ── 메뉴 요청: 상태·답변 저장, 숨기기 ──
+const requestList = document.getElementById('admin-request-list');
+const requestEmpty = document.getElementById('admin-request-empty');
+
+async function loadRequests() {
+  const { data, error } = await supabase
+    .from('menu_request')
+    .select('id, name, note, status, reply, votes, hidden, created_at')
+    .order('votes', { ascending: false })
+    .order('created_at', { ascending: false });
+  if (error) {
+    requestList.textContent = '요청을 불러오지 못했어요.';
+    console.error(error);
+    return;
+  }
+  renderRequests(data);
+}
+
+function renderRequests(requests) {
+  requestList.innerHTML = '';
+  for (const r of requests) {
+    const li = document.createElement('li');
+    fillRequestCard(li, r);
+
+    const votes = document.createElement('div');
+    votes.className = 'vote-btn';
+    votes.innerHTML = '<strong></strong>원해요';
+    votes.querySelector('strong').textContent = r.votes;
+    li.insertBefore(votes, li.children[1]);
+
+    const box = document.createElement('div');
+    box.className = 'req-admin';
+    box.innerHTML = `
+      <select aria-label="상태"></select>
+      <input maxlength="200" placeholder="답변 (예: 다음 주부터 들여올게요)" aria-label="답변" />
+      <button type="button">저장</button>
+      <button type="button" class="link-btn"></button>
+    `;
+    const select = box.querySelector('select');
+    for (const [value, label] of Object.entries(REQUEST_STATUS)) {
+      const opt = document.createElement('option');
+      opt.value = value;
+      opt.textContent = label;
+      select.appendChild(opt);
+    }
+    select.value = r.status;
+    const input = box.querySelector('input');
+    input.value = r.reply ?? '';
+    const [saveBtn, hideBtn] = box.querySelectorAll('button');
+    hideBtn.textContent = r.hidden ? '학생 화면에 다시 보이기' : '학생 화면에서 숨기기';
+
+    saveBtn.addEventListener('click', () =>
+      updateRequest(r.id, { status: select.value, reply: input.value.trim() || null }),
+    );
+    hideBtn.addEventListener('click', () => updateRequest(r.id, { hidden: !r.hidden }));
+
+    li.appendChild(box);
+    requestList.appendChild(li);
+  }
+  requestEmpty.hidden = requests.length > 0;
+}
+
+async function updateRequest(id, changes) {
+  const { error } = await supabase.from('menu_request').update(changes).eq('id', id);
+  if (error) {
+    alert('저장하지 못했어요.');
+    console.error(error);
+    return;
+  }
+  loadRequests();
+}
+
+// 관리자만 들어올 수 있어요. 들어오면 상품 목록과 메뉴 요청 불러오기
+initAuthGate({
+  roles: ['admin'],
+  onEnter: () => {
+    loadProducts();
+    loadRequests();
+  },
+});

@@ -1,0 +1,97 @@
+/* 메뉴 요청 게시판 (학생 화면 + 관리자 화면 공용) */
+
+.list-title { font-size: 16px; margin: 20px 0 8px; }
+
+.request-list { list-style: none; margin: 0 0 24px; padding: 0; display: grid; gap: 10px; }
+
+.request-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  align-items: start;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.request-card .req-name { font-weight: 700; font-size: 16px; }
+.request-card .req-note { grid-column: 1; color: var(--muted); font-size: 14px; }
+.request-card .req-reply {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* 요청 상태 표시 */
+.req-status {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  vertical-align: 2px;
+}
+.req-status.new       { background: var(--unknown); }
+.req-status.reviewing { background: #ca8a04; }
+.req-status.yes       { background: var(--in); }
+.req-status.no        { background: var(--out); }
+
+/* 나도 원해요 버튼 */
+.vote-btn {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  min-width: 64px;
+  min-height: 56px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
+.vote-btn strong { display: block; font-size: 18px; }
+.vote-btn.voted { border-color: var(--brand); color: var(--brand); background: #f0fdf4; }
+
+/* 관리자 화면의 답변 칸 */
+.req-admin {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 6px;
+  margin-top: 6px;
+}
+.req-admin select,
+.req-admin input {
+  padding: 8px;
+  font-size: 15px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  min-width: 0;
+}
+.req-admin button {
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+.req-admin .link-btn { grid-column: 1 / -1; justify-self: start; background: none; color: var(--muted); padding: 0; font-weight: 400; }
+.request-card.is-hidden { opacity: 0.5; }
+
+/* 재고판 위쪽의 "메뉴 요청하기" 링크 */
+.request-link {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: var(--brand);
+  font-weight: 600;
+  font-size: 14px;
+}

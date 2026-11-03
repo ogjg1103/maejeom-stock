@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#16a34a" />
+    <title>메뉴 요청</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/src/admin.css" />
+    <link rel="stylesheet" href="/src/request.css" />
+  </head>
+  <body>
+    <header class="top">
+      <h1>메뉴 요청</h1>
+      <p class="updated"><a href="/">← 재고판으로</a></p>
+    </header>
+
+    <main>
+      <section class="panel">
+        <h2>먹고 싶은 메뉴가 있나요?</h2>
+        <form id="request-form" class="form">
+          <label>메뉴 이름
+            <input name="name" required maxlength="30" placeholder="예: 꼬깔콘 고소한맛" autocomplete="off" />
+          </label>
+          <label>한마디 (선택)
+            <input name="note" maxlength="100" placeholder="예: 시험 기간에 먹고 싶어요" autocomplete="off" />
+          </label>
+          <button class="primary" type="submit">요청하기</button>
+        </form>
+        <p class="msg" id="request-msg"></p>
+        <p class="hint">이름이나 학번은 남지 않아요. 같은 메뉴가 이미 있으면 "나도 원해요"로 더해져요.</p>
+      </section>
+
+      <section>
+        <h2 class="list-title">많이 원하는 순서</h2>
+        <ul id="request-list" class="request-list"></ul>
+        <p class="empty" id="request-empty" hidden>아직 요청이 없어요. 첫 요청을 남겨 보세요!</p>
+      </section>
+    </main>
+
+    <script type="module" src="/src/request.js"></script>
+  </body>
+</html>

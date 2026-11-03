@@ -7,6 +7,7 @@
     <title>매점 관리자</title>
     <link rel="stylesheet" href="/src/style.css" />
     <link rel="stylesheet" href="/src/admin.css" />
+    <link rel="stylesheet" href="/src/request.css" />
   </head>
   <body>
     <header class="top">
@@ -14,7 +15,7 @@
         <h1>매점 관리자</h1>
         <button id="logout" class="link-btn" hidden>로그아웃</button>
       </div>
-      <p class="updated"><a href="/">학생 화면 →</a> · <a href="/sell.html">판매 화면 →</a></p>
+      <p class="updated"><a href="/">학생 화면 →</a> · <a href="/sell.html">판매 화면 →</a> · <a href="/request.html">메뉴 요청 →</a></p>
     </header>
 
     <main>
@@ -49,6 +50,13 @@
             <button class="primary" type="submit">추가하기</button>
           </form>
           <p class="msg" id="add-msg"></p>
+        </section>
+
+        <section class="panel">
+          <h2>메뉴 요청</h2>
+          <p class="hint">상태와 답을 정하고 "저장"을 누르면 학생 화면에 보여요. 장난 글은 숨기기로 가릴 수 있어요.</p>
+          <ul id="admin-request-list" class="request-list"></ul>
+          <p class="empty" id="admin-request-empty" hidden>아직 요청이 없어요.</p>
         </section>
 
         <section class="panel">
