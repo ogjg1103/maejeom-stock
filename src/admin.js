@@ -1,14 +1,9 @@
 import { supabase } from './supabase.js';
+import { initAuthGate } from './auth.js';
 import {
   CATEGORIES, CATEGORY_EMOJI, compareProducts, flattenProduct, formatPrice, stockText,
 } from './catalog.js';
 
-const loginView = document.getElementById('login-view');
-const deniedView = document.getElementById('denied-view');
-const adminView = document.getElementById('admin-view');
-const logoutBtn = document.getElementById('logout');
-const loginForm = document.getElementById('login-form');
-const loginMsg = document.getElementById('login-msg');
 const addForm = document.getElementById('add-form');
 const addMsg = document.getElementById('add-msg');
 const categorySelect = document.getElementById('category-select');
@@ -16,53 +11,10 @@ const stockList = document.getElementById('stock-list');
 
 let products = [];
 
-// 세 화면(로그인 / 승인 필요 / 관리자) 중 하나만 보여 주기
-function show(view) {
-  loginView.hidden = view !== 'login';
-  deniedView.hidden = view !== 'denied';
-  adminView.hidden = view !== 'admin';
-  logoutBtn.hidden = view === 'login';
-}
-
 function setMsg(el, text, ok) {
   el.textContent = text;
   el.className = 'msg ' + (ok ? 'ok' : 'err');
 }
-
-// 로그인 상태를 보고 알맞은 화면으로 보내기
-async function route(session) {
-  if (!session) {
-    show('login');
-    return;
-  }
-  // 운영자 표에서 "관리자로 승인된 사람인지" 확인
-  const { data: me } = await supabase
-    .from('operator')
-    .select('role, approved')
-    .eq('id', session.user.id)
-    .maybeSingle();
-
-  if (me?.role === 'admin' && me.approved) {
-    show('admin');
-    loadProducts();
-  } else {
-    show('denied');
-  }
-}
-
-// ── 로그인 / 로그아웃 ──
-loginForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const form = new FormData(loginForm);
-  const { error } = await supabase.auth.signInWithPassword({
-    email: form.get('email'),
-    password: form.get('password'),
-  });
-  if (error) setMsg(loginMsg, '이메일 또는 비밀번호가 맞지 않아요.', false);
-  else loginForm.reset();
-});
-
-logoutBtn.addEventListener('click', () => supabase.auth.signOut());
 
 // ── 상품 목록 불러오기 (관리자는 숨긴 상품도 보여요) ──
 async function loadProducts() {
@@ -215,8 +167,5 @@ function renderStockList() {
   }
 }
 
-// 처음 열었을 때 + 로그인/로그아웃할 때마다 화면 다시 정하기
-// (onAuthStateChange 안에서 바로 DB를 부르면 멈출 수 있어서 setTimeout으로 한 박자 늦춰요)
-supabase.auth.onAuthStateChange((_event, session) => {
-  setTimeout(() => route(session), 0);
-});
+// 관리자만 들어올 수 있어요. 들어오면 상품 목록 불러오기
+initAuthGate({ roles: ['admin'], onEnter: loadProducts });

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#16a34a" />
+    <title>매점 판매</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <link rel="stylesheet" href="/src/admin.css" />
+    <link rel="stylesheet" href="/src/sell.css" />
+  </head>
+  <body class="wide">
+    <header class="top">
+      <div class="admin-head">
+        <h1>판매</h1>
+        <button id="logout" class="link-btn" hidden>로그아웃</button>
+      </div>
+      <p class="updated" id="today"></p>
+    </header>
+
+    <main>
+      <!-- 1) 로그인 -->
+      <section id="login-view" class="panel narrow" hidden>
+        <h2>로그인</h2>
+        <form id="login-form" class="form">
+          <label>이메일 <input name="email" type="email" required autocomplete="username" /></label>
+          <label>비밀번호 <input name="password" type="password" required autocomplete="current-password" /></label>
+          <button class="primary" type="submit">로그인</button>
+        </form>
+        <p class="msg" id="login-msg"></p>
+      </section>
+
+      <!-- 2) 로그인은 했지만 판매 권한이 없을 때 -->
+      <section id="denied-view" class="panel narrow" hidden>
+        <h2>판매 권한이 필요해요</h2>
+        <p>이 계정은 아직 매점 운영자로 승인되지 않았어요. 관리자에게 승인을 요청하세요.</p>
+      </section>
+
+      <!-- 3) 판매 화면: 왼쪽 상품, 오른쪽 계산 -->
+      <div id="app-view" class="sell-layout" hidden>
+        <section class="sell-products">
+          <input id="search" class="search" type="search" placeholder="상품 검색" autocomplete="off" />
+          <nav class="tabs" id="tabs" aria-label="카테고리"></nav>
+          <div class="sell-grid" id="sell-grid"></div>
+        </section>
+
+        <aside class="cart panel">
+          <ul id="cart-list" class="cart-list"></ul>
+          <p class="cart-empty" id="cart-empty">상품을 누르면 여기에 담겨요</p>
+
+          <div class="sum-row total-row"><span>합계</span><strong id="total">0원</strong></div>
+
+          <div class="paid-label">받은 돈</div>
+          <div class="paid-buttons" id="paid-buttons"></div>
+          <input id="paid-input" class="paid-input" type="number" min="0" step="100"
+                 inputmode="numeric" placeholder="직접 입력 (원)" />
+
+          <div class="sum-row change-row"><span>거스름돈</span><strong id="change">0원</strong></div>
+
+          <button id="sell-btn" class="primary big" disabled>판매 완료</button>
+          <p class="msg" id="sell-msg"></p>
+          <button id="undo-btn" class="link-btn" hidden>방금 판매 취소하기</button>
+        </aside>
+      </div>
+    </main>
+
+    <script type="module" src="/src/sell.js"></script>
+  </body>
+</html>

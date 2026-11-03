@@ -1,0 +1,128 @@
+/* 판매 화면: 계산대 태블릿에 맞게 넓게 써요 */
+
+.wide .top,
+.wide main { max-width: 1100px; }
+
+.narrow { max-width: 420px; margin: 12px auto; }
+
+/* 태블릿·PC: 왼쪽 상품, 오른쪽 계산 / 휴대폰: 위아래 */
+.sell-layout {
+  display: grid;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (min-width: 720px) {
+  .sell-layout { grid-template-columns: 1fr 340px; }
+  .cart { position: sticky; top: 16px; }
+}
+
+/* 휴대폰: 계산 칸을 화면 아래에 붙여 두어, 상품을 스크롤해도 항상 보이게 */
+@media (max-width: 719px) {
+  .cart {
+    position: sticky;
+    bottom: 0;
+    max-height: 55vh;
+    overflow-y: auto;
+    margin: 0 -16px;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 16px rgb(0 0 0 / 0.12);
+  }
+  .cart .sum-row { margin: 8px 0; }
+  .total-row strong { font-size: 24px; }
+  .change-row strong { font-size: 26px; }
+}
+
+/* 상품 버튼 격자 */
+.sell-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: 8px;
+  margin: 8px 0 24px;
+}
+
+.sell-item {
+  display: grid;
+  gap: 2px;
+  min-height: 84px;
+  padding: 10px 8px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.sell-item:active { transform: scale(0.97); }
+.sell-item .item-name { font-weight: 600; font-size: 14px; line-height: 1.25; }
+.sell-item .item-price { font-size: 14px; color: var(--muted); }
+.sell-item .item-stock { font-size: 12px; color: var(--muted); }
+.sell-item.in-cart { border-color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); }
+.sell-item.empty .item-stock { color: var(--out); font-weight: 700; }
+
+/* 장바구니 */
+.cart-list { list-style: none; margin: 0 0 8px; padding: 0; }
+
+.cart-line {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.cart-line .line-name { font-size: 15px; font-weight: 600; }
+.cart-line .line-sum { font-size: 15px; min-width: 64px; text-align: right; }
+.cart-line .stepper button { width: 34px; height: 34px; font-size: 18px; }
+.cart-line .stepper span { min-width: 24px; text-align: center; font-weight: 700; }
+
+.cart-empty { color: var(--muted); font-size: 14px; margin: 4px 0 12px; }
+
+.sum-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 12px 0;
+}
+
+.total-row strong { font-size: 28px; }
+.change-row strong { font-size: 32px; color: var(--brand); }
+.change-row.short strong { color: var(--out); font-size: 20px; }
+
+.paid-label { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+
+.paid-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.paid-buttons button {
+  min-height: 44px;
+  font-size: 15px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.paid-buttons button.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  font-weight: 700;
+}
+
+.paid-input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.primary.big { width: 100%; min-height: 56px; font-size: 18px; }
