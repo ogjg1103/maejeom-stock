@@ -54,6 +54,7 @@
 }
 
 .sell-item:active { transform: scale(0.97); }
+.sell-item .item-icon svg { width: 40px; height: 40px; display: block; }
 .sell-item .item-name { font-weight: 600; font-size: 14px; line-height: 1.25; }
 .sell-item .item-price { font-size: 14px; color: var(--muted); }
 .sell-item .item-stock { font-size: 12px; color: var(--muted); }

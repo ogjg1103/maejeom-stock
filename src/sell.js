@@ -1,6 +1,7 @@
 import { supabase } from './supabase.js';
 import { initAuthGate } from './auth.js';
 import { watchStock } from './live.js';
+import { iconSvg } from './icons.js';
 import { CATEGORIES, compareProducts, flattenProduct, formatPrice } from './catalog.js';
 
 const TABS = ['전체', ...CATEGORIES];
@@ -124,7 +125,8 @@ function renderGrid() {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'sell-item' + (cart.has(p.id) ? ' in-cart' : '') + (p.quantity === 0 ? ' empty' : '');
-    btn.innerHTML = '<span class="item-name"></span><span class="item-price"></span><span class="item-stock"></span>';
+    btn.innerHTML = '<span class="item-icon"></span><span class="item-name"></span><span class="item-price"></span><span class="item-stock"></span>';
+    btn.querySelector('.item-icon').innerHTML = iconSvg(p);
     btn.querySelector('.item-name').textContent = p.name;
     btn.querySelector('.item-price').textContent = formatPrice(p.price);
     btn.querySelector('.item-stock').textContent =

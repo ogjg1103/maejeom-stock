@@ -1,5 +1,6 @@
 import { supabase } from './supabase.js';
 import { watchStock } from './live.js';
+import { iconSvg } from './icons.js';
 import {
   CATEGORIES, compareProducts, flattenProduct, formatPrice, stockClass, stockText,
 } from './catalog.js';
@@ -78,7 +79,7 @@ function renderProducts() {
       <div class="badge"></div>
     `;
     // 글자는 textContent로 넣어요 (상품 이름에 특수문자가 있어도 안전하게)
-    li.querySelector('.thumb').textContent = p.emoji ?? '🛒';
+    li.querySelector('.thumb').innerHTML = iconSvg(p); // 직접 그린 아이콘 (src/icons.js)
     li.querySelector('.name').textContent = p.name;
     li.querySelector('.price').textContent = formatPrice(p.price);
     li.querySelector('.badge').textContent = stockText(p);
