@@ -1,5 +1,6 @@
 import { supabase } from './supabase.js';
 import { initAuthGate } from './auth.js';
+import { watchStock } from './live.js';
 import { CATEGORIES, compareProducts, flattenProduct, formatPrice } from './catalog.js';
 
 const TABS = ['전체', ...CATEGORIES];
@@ -217,10 +218,20 @@ undoBtn.addEventListener('click', undo);
 renderTabs();
 
 // 운영 학생과 관리자 모두 판매할 수 있어요
+// 들어오면 상품·오늘 매출을 불러오고, 다른 기기에서 재고가 바뀌면 바로 다시 불러와요
+// (장바구니는 그대로 남아요)
+let watching = false;
 initAuthGate({
   roles: ['operator', 'admin'],
   onEnter: () => {
     loadProducts();
     loadToday();
+    if (!watching) {
+      watching = true;
+      watchStock(() => {
+        loadProducts();
+        loadToday();
+      });
+    }
   },
 });

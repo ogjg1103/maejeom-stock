@@ -1,4 +1,5 @@
 import { supabase } from './supabase.js';
+import { watchStock } from './live.js';
 import {
   CATEGORIES, compareProducts, flattenProduct, formatPrice, stockClass, stockText,
 } from './catalog.js';
@@ -94,8 +95,16 @@ function renderUpdated() {
     return;
   }
   const latest = Math.min(...times.map(minutesAgo));
-  updated.textContent = latest === 0 ? '방금 업데이트' : `마지막 업데이트 ${latest}분 전`;
+  let text;
+  if (latest === 0) text = '방금 업데이트';
+  else if (latest < 60) text = `마지막 업데이트 ${latest}분 전`;
+  else if (latest < 60 * 24) text = `마지막 업데이트 ${Math.floor(latest / 60)}시간 전`;
+  else text = `마지막 업데이트 ${Math.floor(latest / (60 * 24))}일 전`;
+  updated.textContent = text + (isLive ? ' · 실시간 반영 중' : '');
 }
+
+// 실시간 연결 상태 (연결되면 위쪽에 "실시간 반영 중"이 붙어요)
+let isLive = false;
 
 // 검색창에 글자를 칠 때마다 목록 다시 그리기
 search.addEventListener('input', () => {
@@ -106,3 +115,12 @@ search.addEventListener('input', () => {
 updated.textContent = '재고 불러오는 중…';
 renderTabs();
 loadProducts();
+
+// 관리자·판매 화면에서 재고가 바뀌면 새로고침 없이 바로 다시 불러오기
+watchStock(loadProducts, (live) => {
+  isLive = live;
+  renderUpdated();
+});
+
+// "N분 전" 글자가 멈춰 있지 않게 1분마다 다시 쓰기
+setInterval(renderUpdated, 60 * 1000);
