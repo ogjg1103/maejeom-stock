@@ -29,8 +29,7 @@
     box-shadow: 0 -4px 16px rgb(0 0 0 / 0.12);
   }
   .cart .sum-row { margin: 8px 0; }
-  .total-row strong { font-size: 24px; }
-  .change-row strong { font-size: 26px; }
+  .total-row strong { font-size: 26px; }
 }
 
 /* 상품 버튼 격자 */
@@ -87,42 +86,6 @@
   margin: 12px 0;
 }
 
-.total-row strong { font-size: 28px; }
-.change-row strong { font-size: 32px; color: var(--brand); }
-.change-row.short strong { color: var(--out); font-size: 20px; }
-
-.paid-label { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
-
-.paid-buttons {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-}
-
-.paid-buttons button {
-  min-height: 44px;
-  font-size: 15px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: var(--bg);
-  color: var(--text);
-  cursor: pointer;
-}
-
-.paid-buttons button.active {
-  background: var(--brand);
-  border-color: var(--brand);
-  color: #fff;
-  font-weight: 700;
-}
-
-.paid-input {
-  width: 100%;
-  margin-top: 6px;
-  padding: 10px 12px;
-  font-size: 16px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-}
+.total-row strong { font-size: 32px; color: var(--brand); }
 
 .primary.big { width: 100%; min-height: 56px; font-size: 18px; }

@@ -48,16 +48,10 @@
           <ul id="cart-list" class="cart-list"></ul>
           <p class="cart-empty" id="cart-empty">상품을 누르면 여기에 담겨요</p>
 
-          <div class="sum-row total-row"><span>합계</span><strong id="total">0원</strong></div>
+          <div class="sum-row total-row"><span>이체 받을 금액</span><strong id="total">0원</strong></div>
+          <p class="hint">계좌이체가 들어온 것을 확인한 뒤 눌러 주세요.</p>
 
-          <div class="paid-label">받은 돈</div>
-          <div class="paid-buttons" id="paid-buttons"></div>
-          <input id="paid-input" class="paid-input" type="number" min="0" step="100"
-                 inputmode="numeric" placeholder="직접 입력 (원)" />
-
-          <div class="sum-row change-row"><span>거스름돈</span><strong id="change">0원</strong></div>
-
-          <button id="sell-btn" class="primary big" disabled>판매 완료</button>
+          <button id="sell-btn" class="primary big" disabled>이체 확인 · 판매 완료</button>
           <p class="msg" id="sell-msg"></p>
           <button id="undo-btn" class="link-btn" hidden>방금 판매 취소하기</button>
         </aside>

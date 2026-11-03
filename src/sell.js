@@ -3,8 +3,6 @@ import { initAuthGate } from './auth.js';
 import { CATEGORIES, compareProducts, flattenProduct, formatPrice } from './catalog.js';
 
 const TABS = ['전체', ...CATEGORIES];
-// 받은 돈 빠른 버튼 (null = 딱 맞게 받음)
-const PAID_OPTIONS = [null, 1000, 5000, 10000];
 
 const grid = document.getElementById('sell-grid');
 const tabs = document.getElementById('tabs');
@@ -12,10 +10,6 @@ const search = document.getElementById('search');
 const cartList = document.getElementById('cart-list');
 const cartEmpty = document.getElementById('cart-empty');
 const totalEl = document.getElementById('total');
-const paidButtons = document.getElementById('paid-buttons');
-const paidInput = document.getElementById('paid-input');
-const changeEl = document.getElementById('change');
-const changeRow = changeEl.parentElement;
 const sellBtn = document.getElementById('sell-btn');
 const sellMsg = document.getElementById('sell-msg');
 const undoBtn = document.getElementById('undo-btn');
@@ -23,7 +17,6 @@ const today = document.getElementById('today');
 
 let products = [];
 const cart = new Map(); // 상품 id → 담은 개수
-let paid = null;        // 받은 돈 (null = 딱 맞게)
 let lastSale = null;    // 방금 판매 (취소용)
 let currentCategory = '전체';
 let searchText = '';
@@ -168,35 +161,10 @@ function renderCart() {
   renderMoney();
 }
 
-// 합계 · 받은 돈 · 거스름돈
+// 이체 받을 금액 (계좌이체라서 거스름돈은 없어요)
 function renderMoney() {
-  const total = cartTotal();
-  totalEl.textContent = formatPrice(total);
-
-  paidButtons.innerHTML = '';
-  for (const amount of PAID_OPTIONS) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = amount == null ? '딱 맞게' : formatPrice(amount);
-    btn.className = paid === amount && paidInput.value === '' ? 'active' : '';
-    btn.addEventListener('click', () => {
-      paid = amount;
-      paidInput.value = '';
-      renderMoney();
-    });
-    paidButtons.appendChild(btn);
-  }
-
-  const received = paid ?? total;
-  const change = received - total;
-  if (change < 0) {
-    changeEl.textContent = `${formatPrice(-change)} 모자라요`;
-    changeRow.classList.add('short');
-  } else {
-    changeEl.textContent = formatPrice(change);
-    changeRow.classList.remove('short');
-  }
-  sellBtn.disabled = cart.size === 0 || change < 0;
+  totalEl.textContent = formatPrice(cartTotal());
+  sellBtn.disabled = cart.size === 0;
 }
 
 // ── 판매 완료 / 취소 ──
@@ -206,7 +174,8 @@ async function sell() {
   sellBtn.disabled = true;
 
   // 기록 저장과 재고 빼기는 데이터베이스가 한 번에 처리해요 (supabase/04_sales.sql)
-  const { data, error } = await supabase.rpc('make_sale', { items, paid });
+  // paid: null = 합계만큼 받음 (계좌이체)
+  const { data, error } = await supabase.rpc('make_sale', { items, paid: null });
   if (error) {
     setMsg(error.message || '판매를 저장하지 못했어요.', false);
     renderMoney();
@@ -214,13 +183,11 @@ async function sell() {
   }
 
   lastSale = data;
-  setMsg(`판매 완료! ${formatPrice(data.total)} · 거스름돈 ${formatPrice(data.paid - data.total)}`, true);
+  setMsg(`판매 완료! ${formatPrice(data.total)}`, true);
   undoBtn.hidden = false;
   undoBtn.textContent = `방금 판매(${formatPrice(total)}) 취소하기`;
 
   cart.clear();
-  paid = null;
-  paidInput.value = '';
   await Promise.all([loadProducts(), loadToday()]);
 }
 
@@ -242,11 +209,6 @@ async function undo() {
 search.addEventListener('input', () => {
   searchText = search.value.trim();
   renderGrid();
-});
-
-paidInput.addEventListener('input', () => {
-  paid = paidInput.value === '' ? null : Number(paidInput.value);
-  renderMoney();
 });
 
 sellBtn.addEventListener('click', sell);
