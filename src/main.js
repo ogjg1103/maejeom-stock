@@ -125,3 +125,29 @@ watchStock(loadProducts, (live) => {
 
 // "N분 전" 글자가 멈춰 있지 않게 1분마다 다시 쓰기
 setInterval(renderUpdated, 60 * 1000);
+
+// 이 기기에서 매점부·관리자가 로그인해 있으면 "매점부 로그인" 대신 바로가기를 보여 줘요
+// (학생은 로그인하지 않으니 그대로 "매점부 로그인"만 보여요)
+async function showStaffLinks() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return;
+  const { data: me } = await supabase
+    .from('operator')
+    .select('role, approved')
+    .eq('id', session.user.id)
+    .maybeSingle();
+  if (!me?.approved) return;
+
+  const links = [['/sell.html', '판매']];
+  if (me.role === 'admin') links.push(['/admin.html', '관리']);
+  const nav = document.getElementById('staff-links');
+  nav.innerHTML = '';
+  for (const [href, label] of links) {
+    const a = document.createElement('a');
+    a.href = href;
+    a.textContent = label;
+    nav.appendChild(a);
+  }
+}
+
+showStaffLinks();

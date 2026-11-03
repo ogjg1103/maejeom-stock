@@ -39,6 +39,26 @@ body {
 
 h1 { margin: 0; font-size: 22px; }
 
+/* 제목 오른쪽의 작은 "매점부 로그인" 입구 */
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.staff-links { display: flex; gap: 6px; flex: none; }
+
+.staff-links a {
+  padding: 6px 10px;
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+}
+
 .updated {
   margin: 4px 0 12px;
   color: var(--muted);

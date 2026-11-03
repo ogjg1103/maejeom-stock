@@ -11,7 +11,13 @@
   </head>
   <body>
     <header class="top">
-      <h1>매점 재고판</h1>
+      <div class="title-row">
+        <h1>매점 재고판</h1>
+        <!-- 매점부·관리자용 입구 (학생은 몰라도 돼요) -->
+        <nav class="staff-links" id="staff-links">
+          <a href="/sell.html">매점부 로그인</a>
+        </nav>
+      </div>
       <p class="updated" id="updated"></p>
       <a class="request-link" href="/request.html">먹고 싶은 메뉴 요청하기 →</a>
       <input id="search" class="search" type="search" placeholder="상품 이름 검색" autocomplete="off" />

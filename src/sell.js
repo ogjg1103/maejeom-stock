@@ -225,7 +225,9 @@ renderTabs();
 let watching = false;
 initAuthGate({
   roles: ['operator', 'admin'],
-  onEnter: () => {
+  onEnter: (role) => {
+    // 관리자에게만 "관리자 화면" 바로가기 보이기
+    document.getElementById('admin-link').hidden = role !== 'admin';
     loadProducts();
     loadToday();
     if (!watching) {

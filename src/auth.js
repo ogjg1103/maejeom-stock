@@ -4,7 +4,7 @@ import { supabase } from './supabase.js';
 // 로그인 안 함 → 로그인 화면, 권한 없음 → 승인 필요 화면, 권한 있음 → 본 화면
 //
 // roles: 이 화면에 들어올 수 있는 역할 (예: ['admin'] 또는 ['operator', 'admin'])
-// onEnter: 본 화면을 처음 보여 줄 때 할 일 (예: 상품 불러오기)
+// onEnter(role): 본 화면을 처음 보여 줄 때 할 일 (예: 상품 불러오기). role = 'operator' 또는 'admin'
 export function initAuthGate({ roles, onEnter }) {
   const loginView = document.getElementById('login-view');
   const deniedView = document.getElementById('denied-view');
@@ -40,7 +40,7 @@ export function initAuthGate({ roles, onEnter }) {
 
     if (me?.approved && roles.includes(me.role)) {
       show('app');
-      onEnter();
+      onEnter(me.role);
     } else {
       show('denied');
     }
