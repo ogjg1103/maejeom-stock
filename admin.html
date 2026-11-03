@@ -38,6 +38,20 @@
 
       <!-- 3) 관리자 화면 -->
       <div id="app-view" hidden>
+        <details class="panel account">
+          <summary>비밀번호 바꾸기</summary>
+          <form id="password-form" class="form">
+            <label>새 비밀번호 (8글자 이상)
+              <input name="password" type="password" required minlength="8" autocomplete="new-password" />
+            </label>
+            <label>새 비밀번호 한 번 더
+              <input name="confirm" type="password" required minlength="8" autocomplete="new-password" />
+            </label>
+            <button class="primary" type="submit">비밀번호 바꾸기</button>
+          </form>
+          <p class="msg" id="password-msg"></p>
+        </details>
+
         <section class="panel">
           <h2>새 상품 추가</h2>
           <form id="add-form" class="form">

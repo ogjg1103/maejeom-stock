@@ -39,6 +39,20 @@
       <!-- 3) 판매 화면: 왼쪽 상품, 오른쪽 계산 -->
       <div id="app-view" class="sell-layout" hidden>
         <section class="sell-products">
+          <details class="panel account">
+            <summary>비밀번호 바꾸기</summary>
+            <form id="password-form" class="form">
+              <label>새 비밀번호 (8글자 이상)
+                <input name="password" type="password" required minlength="8" autocomplete="new-password" />
+              </label>
+              <label>새 비밀번호 한 번 더
+                <input name="confirm" type="password" required minlength="8" autocomplete="new-password" />
+              </label>
+              <button class="primary" type="submit">비밀번호 바꾸기</button>
+            </form>
+            <p class="msg" id="password-msg"></p>
+          </details>
+
           <input id="search" class="search" type="search" placeholder="상품 검색" autocomplete="off" />
           <nav class="tabs" id="tabs" aria-label="카테고리"></nav>
           <div class="sell-grid" id="sell-grid"></div>

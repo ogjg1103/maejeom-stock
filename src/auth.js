@@ -64,11 +64,58 @@ export function initAuthGate({ roles, onEnter }) {
 
   logoutBtn.addEventListener('click', () => supabase.auth.signOut());
 
+  setupPasswordChange();
+
   // 처음 열었을 때 + 로그인/로그아웃할 때마다 화면 다시 정하기
   // (onAuthStateChange 안에서 바로 DB를 부르면 멈출 수 있어서 setTimeout으로 한 박자 늦춰요)
   // 토큰이 새로 발급될 때(TOKEN_REFRESHED)는 화면을 다시 그리지 않아요
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'TOKEN_REFRESHED') return;
     setTimeout(() => route(session), 0);
+  });
+}
+
+// 로그인한 사람이 자기 비밀번호를 직접 바꾸는 칸 (화면에 password-form이 있을 때만)
+function setupPasswordChange() {
+  const form = document.getElementById('password-form');
+  if (!form) return;
+  const msg = document.getElementById('password-msg');
+
+  const say = (text, ok) => {
+    msg.textContent = text;
+    msg.className = 'msg ' + (ok ? 'ok' : 'err');
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const password = data.get('password');
+
+    if (password.length < 8) {
+      say('비밀번호는 8글자 이상으로 정해 주세요.', false);
+      return;
+    }
+    if (password !== data.get('confirm')) {
+      say('두 칸에 적은 비밀번호가 서로 달라요.', false);
+      return;
+    }
+
+    const button = form.querySelector('button');
+    button.disabled = true;
+    const { error } = await supabase.auth.updateUser({ password });
+    button.disabled = false;
+
+    if (error) {
+      say(
+        error.code === 'same_password'
+          ? '지금 쓰는 비밀번호와 같아요. 다른 비밀번호를 적어 주세요.'
+          : '바꾸지 못했어요. 잠시 후 다시 시도해 주세요.',
+        false,
+      );
+      console.error(error);
+      return;
+    }
+    form.reset();
+    say('비밀번호를 바꿨어요. 다음 로그인부터 새 비밀번호를 쓰세요.', true);
   });
 }

@@ -111,3 +111,11 @@
 }
 
 .row-actions { grid-column: 1 / -1; }
+
+/* 비밀번호 바꾸기: 평소엔 접혀 있다가 누르면 펼쳐져요 */
+.account summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+}
+.account[open] summary { margin-bottom: 12px; }
