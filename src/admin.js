@@ -297,12 +297,18 @@ async function setApproved(o, approved) {
   loadOperators();
 }
 
-// 관리자만 들어올 수 있어요. 들어오면 운영자·상품·메뉴 요청 불러오기
+// 매점부(운영자)와 관리자 모두 들어올 수 있어요
+// - 모두: 새 상품 추가, 재고 채우기·개수 맞추기, 숨기기
+// - 관리자만: 운영자 승인·해제, 메뉴 요청 답변 ("admin-only" 칸)
 initAuthGate({
-  roles: ['admin'],
-  onEnter: () => {
-    loadOperators();
+  roles: ['operator', 'admin'],
+  onEnter: (role) => {
+    const isAdmin = role === 'admin';
+    document.querySelectorAll('.admin-only').forEach((el) => (el.hidden = !isAdmin));
     loadProducts();
-    loadRequests();
+    if (isAdmin) {
+      loadOperators();
+      loadRequests();
+    }
   },
 });
