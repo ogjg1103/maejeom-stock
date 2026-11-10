@@ -240,10 +240,68 @@ async function updateRequest(id, changes) {
   loadRequests();
 }
 
-// 관리자만 들어올 수 있어요. 들어오면 상품 목록과 메뉴 요청 불러오기
+// ── 운영자 관리: 승인 대기 → 승인, 승인된 사람 → 해제 ──
+const operatorList = document.getElementById('operator-list');
+const operatorWaiting = document.getElementById('operator-waiting');
+
+async function loadOperators() {
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data, error } = await supabase
+    .from('operator')
+    .select('id, name, email, role, approved, created_at')
+    .order('approved') // 승인 대기가 맨 위
+    .order('created_at', { ascending: false });
+  if (error) {
+    operatorList.textContent = '운영자 목록을 불러오지 못했어요.';
+    console.error(error);
+    return;
+  }
+
+  const waiting = data.filter((o) => !o.approved).length;
+  operatorWaiting.textContent = waiting ? `· 승인 대기 ${waiting}명` : '';
+
+  operatorList.innerHTML = '';
+  for (const o of data) {
+    const li = document.createElement('li');
+    li.className = 'operator-row' + (o.approved ? '' : ' waiting');
+    li.innerHTML = '<div class="op-name"></div><div class="op-sub"></div>';
+    li.querySelector('.op-name').textContent =
+      `${o.name}${o.role === 'admin' ? ' (관리자)' : ''}${o.approved ? '' : ' · 승인 대기'}`;
+    li.querySelector('.op-sub').textContent = o.email ?? '';
+
+    // 나 자신은 바꿀 수 없어요 (실수로 관리자 화면에서 잠기지 않게)
+    if (o.id !== user.id) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'op-btn' + (o.approved ? ' off' : '');
+      btn.textContent = o.approved ? '해제' : '승인';
+      btn.addEventListener('click', () => setApproved(o, !o.approved));
+      li.appendChild(btn);
+    }
+    operatorList.appendChild(li);
+  }
+}
+
+async function setApproved(o, approved) {
+  if (!approved && !confirm(`${o.name}의 판매 권한을 해제할까요? 바로 판매 화면을 못 쓰게 돼요.`)) return;
+  const { data, error } = await supabase
+    .from('operator')
+    .update({ approved })
+    .eq('id', o.id)
+    .select('id');
+  if (error || data.length === 0) {
+    alert('바꾸지 못했어요.');
+    console.error(error);
+    return;
+  }
+  loadOperators();
+}
+
+// 관리자만 들어올 수 있어요. 들어오면 운영자·상품·메뉴 요청 불러오기
 initAuthGate({
   roles: ['admin'],
   onEnter: () => {
+    loadOperators();
     loadProducts();
     loadRequests();
   },

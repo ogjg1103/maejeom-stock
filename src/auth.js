@@ -54,7 +54,10 @@ export function initAuthGate({ roles, onEnter }) {
       password: form.get('password'),
     });
     if (error) {
-      loginMsg.textContent = '이메일 또는 비밀번호가 맞지 않아요.';
+      loginMsg.textContent =
+        error.code === 'email_not_confirmed'
+          ? '이메일 확인이 아직 안 됐어요. 관리자에게 알려 주세요.'
+          : '이메일 또는 비밀번호가 맞지 않아요.';
       loginMsg.className = 'msg err';
     } else {
       loginForm.reset();
@@ -62,8 +65,10 @@ export function initAuthGate({ roles, onEnter }) {
     }
   });
 
-  logoutBtn.addEventListener('click', () => supabase.auth.signOut());
+  // 로그아웃은 "이 기기만" (같은 계정으로 로그인한 다른 휴대폰은 그대로)
+  logoutBtn.addEventListener('click', () => supabase.auth.signOut({ scope: 'local' }));
 
+  setupSignup();
   setupPasswordChange();
 
   // 처음 열었을 때 + 로그인/로그아웃할 때마다 화면 다시 정하기
@@ -72,6 +77,63 @@ export function initAuthGate({ roles, onEnter }) {
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'TOKEN_REFRESHED') return;
     setTimeout(() => route(session), 0);
+  });
+}
+
+// 매점부 가입 (화면에 signup-form이 있을 때만)
+// 가입하면 데이터베이스가 "승인 대기" 운영자로 등록해요 (supabase/07_operator_signup.sql)
+// 가입과 동시에 로그인되고, 관리자가 승인하기 전까지는 "승인을 기다리는 중" 화면이 보여요.
+function setupSignup() {
+  const form = document.getElementById('signup-form');
+  if (!form) return;
+  const msg = document.getElementById('signup-msg');
+
+  const say = (text, ok) => {
+    msg.textContent = text;
+    msg.className = 'msg ' + (ok ? 'ok' : 'err');
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const name = data.get('name').trim();
+    const password = data.get('password');
+
+    if (!name) {
+      say('이름을 적어 주세요.', false);
+      return;
+    }
+    if (password.length < 8) {
+      say('비밀번호는 8글자 이상으로 정해 주세요.', false);
+      return;
+    }
+    if (password !== data.get('confirm')) {
+      say('두 칸에 적은 비밀번호가 서로 달라요.', false);
+      return;
+    }
+
+    const button = form.querySelector('button');
+    button.disabled = true;
+    const { data: result, error } = await supabase.auth.signUp({
+      email: data.get('email').trim(),
+      password,
+      options: { data: { name } },
+    });
+    button.disabled = false;
+
+    if (error) {
+      say(
+        error.code === 'user_already_exists'
+          ? '이미 가입한 이메일이에요. 위에서 로그인해 주세요.'
+          : '가입하지 못했어요. 잠시 후 다시 시도해 주세요.',
+        false,
+      );
+      console.error(error);
+      return;
+    }
+    form.reset();
+    // 이메일 확인을 꺼 두었으면 바로 로그인돼서 "승인을 기다리는 중" 화면으로 넘어가요
+    if (!result.session) say('가입했어요! 위에서 로그인해 주세요.', true);
   });
 }
 

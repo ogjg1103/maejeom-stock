@@ -119,3 +119,40 @@
   font-size: 16px;
 }
 .account[open] summary { margin-bottom: 12px; }
+
+/* 로그인 칸 아래 "매점부 가입하기" */
+.signup {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.signup summary { font-size: 15px; color: var(--brand); }
+
+/* 운영자 관리 목록 */
+.operator-list { list-style: none; margin: 0; padding: 0; }
+
+.operator-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 8px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.operator-row .op-name { font-weight: 700; }
+.operator-row .op-sub { font-size: 13px; color: var(--muted); word-break: break-all; }
+.operator-row.waiting { background: #fffbeb; }
+
+.op-btn {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--brand);
+  color: #fff;
+}
+.op-btn.off { background: var(--bg); color: var(--out); border: 1px solid var(--line); }

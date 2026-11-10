@@ -29,12 +29,33 @@
           <button class="primary" type="submit">로그인</button>
         </form>
         <p class="msg" id="login-msg"></p>
+
+        <!-- 처음 쓰는 매점부 학생: 가입 → 관리자 승인 → 판매 -->
+        <details class="account signup">
+          <summary>처음이에요? 매점부 가입하기</summary>
+          <form id="signup-form" class="form">
+            <label>이름 (관리자가 알아볼 수 있게)
+              <input name="name" required maxlength="20" autocomplete="name" />
+            </label>
+            <label>이메일 <input name="email" type="email" required autocomplete="username" /></label>
+            <label>비밀번호 (8글자 이상)
+              <input name="password" type="password" required minlength="8" autocomplete="new-password" />
+            </label>
+            <label>비밀번호 한 번 더
+              <input name="confirm" type="password" required minlength="8" autocomplete="new-password" />
+            </label>
+            <button class="primary" type="submit">가입하기</button>
+          </form>
+          <p class="msg" id="signup-msg"></p>
+          <p class="hint">가입한 뒤 관리자가 승인하면 판매 화면을 쓸 수 있어요.</p>
+        </details>
       </section>
 
-      <!-- 2) 로그인은 했지만 판매 권한이 없을 때 -->
+      <!-- 2) 로그인은 했지만 아직 승인 전일 때 -->
       <section id="denied-view" class="panel narrow" hidden>
-        <h2>판매 권한이 필요해요</h2>
-        <p>이 계정은 아직 매점 운영자로 승인되지 않았어요. 관리자에게 승인을 요청하세요.</p>
+        <h2>승인을 기다리는 중이에요</h2>
+        <p>관리자가 승인하면 판매 화면을 쓸 수 있어요. 매점 담당 선생님이나 매점부장에게 승인을 부탁하세요.</p>
+        <button class="primary" type="button" onclick="location.reload()">승인됐는지 다시 확인</button>
       </section>
 
       <!-- 3) 판매 화면: 왼쪽 상품, 오른쪽 계산 -->
