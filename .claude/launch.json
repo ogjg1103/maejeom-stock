@@ -6,6 +6,12 @@
       "runtimeExecutable": "npm.cmd",
       "runtimeArgs": ["run", "dev"],
       "port": 5173
+    },
+    {
+      "name": "maejeom-pages-preview",
+      "runtimeExecutable": "npm.cmd",
+      "runtimeArgs": ["run", "preview", "--", "--base", "/maejeom-stock/", "--port", "4173", "--strictPort"],
+      "port": 4173
     }
   ]
 }

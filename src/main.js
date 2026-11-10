@@ -138,8 +138,8 @@ async function showStaffLinks() {
     .maybeSingle();
   if (!me?.approved) return;
 
-  const links = [['/sell.html', '판매']];
-  if (me.role === 'admin') links.push(['/admin.html', '관리']);
+  const links = [['./sell.html', '판매']];
+  if (me.role === 'admin') links.push(['./admin.html', '관리']);
   const nav = document.getElementById('staff-links');
   nav.innerHTML = '';
   for (const [href, label] of links) {

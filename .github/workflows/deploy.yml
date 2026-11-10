@@ -1,0 +1,44 @@
+# GitHub에 코드를 올릴 때마다(main) 홈페이지를 자동으로 만들어서 GitHub Pages에 올려요
+name: 홈페이지 올리기
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # GitHub 화면에서 손으로 다시 올릴 수도 있게
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # 주소 뒤에 붙는 폴더 이름 = 저장소 이름 (예: /maejeom-stock/)
+      - run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
